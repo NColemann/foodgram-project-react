@@ -16,7 +16,7 @@ from recipes.models import (
 User = get_user_model()
 
 
-class CustomUserCreateSerializer(UserCreateSerializer):
+class UserFieldsCreateSerializer(UserCreateSerializer):
     """Сериализатор для регистрации пользователя."""
     class Meta:
         model = User
@@ -42,8 +42,8 @@ class CustomUserCreateSerializer(UserCreateSerializer):
         return user
 
 
-class CustomUserSerializer(UserSerializer):
-    """Преобразует данные модели User для админов."""
+class UserFieldsSerializer(UserSerializer):
+    """Преобразует данные модели User."""
 
     is_subscribed = serializers.SerializerMethodField(read_only=True)
 
@@ -108,7 +108,7 @@ class TagSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     """Рецепты."""
 
-    author = CustomUserSerializer(read_only=True)
+    author = UserFieldsSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
@@ -153,7 +153,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Добавление рецептов."""
 
-    author = CustomUserSerializer(read_only=True)
+    author = UserFieldsSerializer(read_only=True)
     ingredients = AddIngredientSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -208,17 +208,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             })
         return data
 
-    @staticmethod
-    def create_ingredients(ingredients, recipe):
-        for ingredient in ingredients:
-            IngredientRecipe.objects.create(
-                recipe=recipe,
-                ingredient=ingredient['id'],
-                amount=ingredient['amount'],
-            )
+    def __create_ingredients(self, ingredients, recipe):
+        IngredientRecipe.objects.bulk_create([IngredientRecipe(
+            recipe=recipe,
+            ingredient=ingredient['id'],
+            amount=ingredient['amount'],
+        ) for ingredient in ingredients])
 
-    @staticmethod
-    def create_tags(tags, recipe):
+    def __create_tags(self, tags, recipe):
         for tag in tags:
             recipe.tags.add(tag)
 
@@ -227,8 +224,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(author=author, **validated_data)
-        self.create_tags(tags, recipe)
-        self.create_ingredients(ingredients, recipe)
+        self.__create_tags(tags, recipe)
+        self.__create_ingredients(ingredients, recipe)
         return recipe
 
     def to_representation(self, instance):
@@ -239,8 +236,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def update(self, recipe, validated_data):
         recipe.tags.clear()
         IngredientRecipe.objects.filter(recipe=recipe).delete()
-        self.create_tags(validated_data.pop('tags'), recipe)
-        self.create_ingredients(validated_data.pop('ingredients'), recipe)
+        self.__create_tags(validated_data.pop('tags'), recipe)
+        self.__create_ingredients(validated_data.pop('ingredients'), recipe)
         return super().update(recipe, validated_data)
 
 
@@ -252,7 +249,7 @@ class SmallRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class FavoriteSerializer(SmallRecipeSerializer):
     """Список избранного."""
 
     class Meta:
@@ -265,7 +262,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return SmallRecipeSerializer(instance.recipe, context=context).data
 
 
-class ShoppingListSerializer(serializers.ModelSerializer):
+class ShoppingListSerializer(SmallRecipeSerializer):
     """Список покупок."""
 
     class Meta:
@@ -278,7 +275,7 @@ class ShoppingListSerializer(serializers.ModelSerializer):
         return SmallRecipeSerializer(instance.recipe, context=context).data
 
 
-class FollowSerializer(CustomUserSerializer):
+class FollowSerializer(UserFieldsSerializer):
     """Подписки пользователя."""
 
     recipes = serializers.SerializerMethodField(read_only=True)

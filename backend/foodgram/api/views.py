@@ -32,7 +32,7 @@ from .serializers import (
     FavoriteSerializer,
     ShoppingListSerializer,
     FollowSerializer,
-    CustomUserSerializer,
+    UserFieldsSerializer,
 )
 
 User = get_user_model()
@@ -40,7 +40,7 @@ User = get_user_model()
 
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = UserFieldsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
@@ -80,13 +80,8 @@ class FollowViewSet(APIView):
             user=request.user,
             author_id=user_id,
         )
-        if following:
-            following.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {'error': 'Вы не подписаны на пользователя'},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        following.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class FollowListViewSet(ListAPIView):
@@ -166,6 +161,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         return self.delete_object(request=request, pk=pk, model=ShoppingList)
 
+    def __list_to_display(self, shopping_list):
+        list_display = ([
+            f"- {item}: {value['amount']} {value['measurement_unit']}\n"
+            for item, value in shopping_list.items()
+        ])
+        return list_display
+
     @action(
         detail=False,
         methods=('get',),
@@ -187,10 +189,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 }
             else:
                 shopping_list[name]['amount'] += amount
-        main_list = ([
-            f"- {item}: {value['amount']} {value['measurement_unit']}\n"
-            for item, value in shopping_list.items()
-        ])
+        main_list = self.__list_to_display(shopping_list)
         response = HttpResponse(main_list, 'Content-Type: text/plain')
         response['Content-Disposition'] = (
             'attachment; filename="ShoppingList.txt"'

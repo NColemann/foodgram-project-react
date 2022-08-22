@@ -37,10 +37,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'recipes',
-    'users',
-    'api',
-    'colorfield',
     'django_filters',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +47,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'colorfield',
+    'recipes',
+    'users',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -163,13 +163,13 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
-    "LOGIN_FIELD": 'email',
-    "SEND_ACTIVATION_EMAIL": False,
+    'LOGIN_FIELD': 'email',
+    'SEND_ACTIVATION_EMAIL': False,
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomUserCreateSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
+        'user_create': 'api.serializers.UserFieldsCreateSerializer',
+        'user': 'api.serializers.UserFieldsSerializer',
+        'current_user': 'api.serializers.UserFieldsSerializer',
     },
     'PERMISSIONS': {
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
