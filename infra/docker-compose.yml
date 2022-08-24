@@ -19,7 +19,7 @@ services:
   frontend:
     image: ncolemann/frontend_foodgram
     volumes:
-      - ../frontend/:/app/result_build/
+      - result_build:/app/result_build/build/
     depends_on:
       - db
   nginx:
@@ -38,5 +38,6 @@ services:
 
 volumes:
   postgres_data:
+  result_build:
   static_value:
   media_value:
