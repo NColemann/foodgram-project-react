@@ -55,7 +55,7 @@ jobs:
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
             sudo docker-compose stop
-            sudo docker-compose rm web
+            sudo docker-compose rm backend
             sudo systemctl stop nginx
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend_foodgram:latest
             touch .env
