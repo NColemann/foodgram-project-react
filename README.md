@@ -88,6 +88,7 @@ POST /api/auth/token/login/
   "password": "string",
   "email": "string"
 }
+```
 
 #### Cписок рецептов
 GET /api/recipes/
