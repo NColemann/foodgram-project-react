@@ -1,7 +1,7 @@
 # Foodgram - «Продуктовый помощник»
 
 ---
-![workflow](https://github.com/NColemann/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+![workflow](https://github.com/NColemann/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
 
 ### Адрес сервера
