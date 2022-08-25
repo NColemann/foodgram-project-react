@@ -31,7 +31,7 @@ services:
       - static_value:/var/html/static
       - media_value:/var/html/media
       - ../frontend/build:/usr/share/nginx/html/
-      - redoc:/usr/share/nginx/html/api/docs/
+      - ../docs:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
       - frontend
@@ -41,4 +41,3 @@ volumes:
   result_build:
   static_value:
   media_value:
-  redoc:
