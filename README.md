@@ -1,5 +1,11 @@
 # Foodgram - «Продуктовый помощник»
 
+---
+![workflow](https://github.com/NColemann/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+
+
+### Адрес сервера
+http://51.250.19.220/
 
 ## Описание
 На сайте foodgram пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
@@ -8,6 +14,8 @@
 1. Python 3.7
 2. Django 2.2.16
 3. Django REST framework 3.12.4
+4. Docker
+5. Nginx
 
 ### Зависимости
 ```
@@ -19,6 +27,7 @@ djangorestframework-simplejwt==5.1.0
 django-filter==21.1
 gunicorn==20.0.4
 pytz==2020.1
+asgiref==3.2.10
 psycopg2-binary==2.9.3
 sqlparse==0.3.1
 python-dotenv==0.20.0
@@ -38,6 +47,23 @@ POSTGRES_PASSWORD=postgres # пароль для подключения к БД 
 DB_HOST=db # название сервиса (контейнера)
 DB_PORT=5432 # порт для подключения к БД
 ```
+
+### Запуск приложения в контейнерах
+- Из директории проекта перейдите в директорию с файлом docker-compose и выполните команду:
+```
+cd infra
+docker-compose up -d --build
+```
+- Выполните миграции
+```
+docker-compose exec web python manage.py migrate 
+```
+- Соберите статику:
+```
+docker-compose exec web python manage.py collectstatic --no-input
+```
+Проект будет доступен по адресу: http://localhost:8080/
+
 
  ---
 
