@@ -111,6 +111,7 @@ POST /api/recipes/
   "text": "string",
   "cooking_time": 1
 }
+```
 
 #### Добавить рецепт в избранное
 POST /api/recipes/{id}/favorite
