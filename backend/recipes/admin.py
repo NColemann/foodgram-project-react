@@ -47,13 +47,11 @@ class RecipeAdmin(admin.ModelAdmin):
     @staticmethod
     def amount_favorites(obj):
         return obj.favorites.count()
-    amount_favorites.short_description = (
-        'Число добавлений рецепта в избранное'
-    )
+    amount_favorites.short_description = 'Число добавлений в избранное'
 
     @staticmethod
     def tags(obj):
-        return list(obj.tags.name())
+        return "\n".join([i[0] for i in obj.tags.values_list('name')])
     tags.short_description = 'Теги'
 
 
