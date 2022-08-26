@@ -35,7 +35,6 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'name',
-        'author',
         'amount_favorites',
     )
     list_filter = ('author', 'name', 'tags')
