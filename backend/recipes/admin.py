@@ -49,7 +49,7 @@ class RecipeAdmin(admin.ModelAdmin):
     amount_favorites.short_description = 'Число добавлений в избранное'
 
     def get_tags(self, obj):
-        return obj.tags.values_list('name')
+        return "\n".join([i[0] for i in obj.tags.values_list('name')])
     get_tags.short_description = 'Теги'
 
 
