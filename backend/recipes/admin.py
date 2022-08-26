@@ -24,6 +24,12 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+class IngredientRecipeInline(admin.TabularInline):
+    model = IngredientRecipe
+    min_num = 1
+    extra = 1
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = (
@@ -36,21 +42,20 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     list_filter = ('author', 'name', 'tags')
     search_fields = ('name',)
+    inlines = (IngredientRecipeInline,)
     empty_value_display = '-пусто-'
 
     @staticmethod
     def amount_favorites(obj):
         return obj.favorites.count()
+    amount_favorites.short_description = (
+        'Число добавлений рецепта в избранное'
+    )
 
     @staticmethod
     def tags(obj):
-        return list(obj.tags.all())
+        return list(obj.tags.name())
     tags.short_description = 'Теги'
-
-    @staticmethod
-    def ingredients(obj):
-        return list(obj.ingredients.all())
-    ingredients.short_description = 'Ингредиенты'
 
 
 @admin.register(IngredientRecipe)
