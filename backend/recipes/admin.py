@@ -52,11 +52,6 @@ class RecipeAdmin(admin.ModelAdmin):
         'Число добавлений рецепта в избранное'
     )
 
-    @staticmethod
-    def tags(obj):
-        return list(obj.tags.name())
-    tags.short_description = 'Теги'
-
 
 @admin.register(IngredientRecipe)
 class IngredientAmountAdmin(admin.ModelAdmin):
