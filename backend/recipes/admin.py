@@ -38,7 +38,7 @@ class RecipeAdmin(admin.ModelAdmin):
         'author',
         'amount_favorites',
     )
-    list_filter = ('author', 'name')
+    list_filter = ('author', 'name', 'tags')
     search_fields = ('name',)
     inlines = (IngredientRecipeInline,)
     empty_value_display = '-пусто-'
