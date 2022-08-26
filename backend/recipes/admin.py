@@ -49,7 +49,7 @@ class RecipeAdmin(admin.ModelAdmin):
     amount_favorites.short_description = 'Число добавлений в избранное'
 
     def tags(self, obj):
-        return obj.tags.values_list('name')
+        return str(obj.tags.values_list('name'))
     tags.short_description = 'Теги'
 
 
